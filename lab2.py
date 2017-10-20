@@ -15,8 +15,8 @@ UDP_PORT = 5005
 
 sock = socket.socket(socket.AF_INET6,socket.SOCK_DGRAM)
 audio = pyaudio.PyAudio()
-stream = audio.open(format = FORMAT, channels = CHANNELS, rate=RATE, input = True, frames_per_buffer = INPUT_FRAMES_PER_BLOCK)
-streamout = audio.open(format = FORMAT, channels = CHANNELS, rate= RATE,output=True, frames_per_buffer = INPUT_FRAMES_PER_BLOCK)
+stream = audio.open(format = FORMAT, channels = CHANNELS, rate=RATE, input = True, frames_per_buffer = 1024)
+#streamout = audio.open(format = FORMAT, channels = CHANNELS, rate= RATE,output=True, frames_per_buffer = INPUT_FRAMES_PER_BLOCK)
 # enc = Encoder(RATE,CHANNELS,constants.APPLICATION_VOIP)
 # dec = Decoder(RATE,CHANNELS,)
 
@@ -25,10 +25,11 @@ errorCount = 0
 i = 0
 while(1):
 	try:
-		raw_data = stream.read(INPUT_FRAMES_PER_BLOCK)
+		raw_data = stream.read(1)
 		serial = struct.pack('q',i)
 		sock.sendto(serial+raw_data,(UDP_IP,UDP_PORT))
 		i+=1
+		print i
 		# encdata = []
 		# for x in data:
 		# 	encdata.append(Encoder.encode(enc,x,INPUT_BLOCK_TIME))
@@ -37,8 +38,8 @@ while(1):
 		# 	decdata += Decoder.decode(dec,x,INPUT_BLOCK_TIME)
 
 		# streamout.write(decdata)
-		streamout.close()
-		stream.close()
+		#streamout.close()
+		#stream.close()
 	except IOError, e:
 		errorCount += 1
 		print("(%d) Error recording: %s" %(errorCount, e))
