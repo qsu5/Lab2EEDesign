@@ -10,10 +10,10 @@ CHANNELS = 1
 RATE = 48000
 INPUT_BLOCK_TIME = 0.02
 INPUT_FRAMES_PER_BLOCK = int(RATE*INPUT_BLOCK_TIME)
-UDP_IP = "127.0.0.1"
+UDP_IP = "2620::e50:1400:64f3:9ac8:f4bd:fbd3"
 UDP_PORT = 5005
 
-sock = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
+sock = socket.socket(socket.AF_INET6,socket.SOCK_DGRAM)
 audio = pyaudio.PyAudio()
 stream = audio.open(format = FORMAT, channels = CHANNELS, rate=RATE, input = True, frames_per_buffer = INPUT_FRAMES_PER_BLOCK)
 streamout = audio.open(format = FORMAT, channels = CHANNELS, rate= RATE,output=True, frames_per_buffer = INPUT_FRAMES_PER_BLOCK)
@@ -28,6 +28,7 @@ while(1):
 		raw_data = stream.read(INPUT_FRAMES_PER_BLOCK)
 		serial = struct.pack('q',i)
 		sock.sendto(serial+raw_data,(UDP_IP,UDP_PORT))
+		i+=1
 		# encdata = []
 		# for x in data:
 		# 	encdata.append(Encoder.encode(enc,x,INPUT_BLOCK_TIME))
@@ -43,10 +44,5 @@ while(1):
 		print("(%d) Error recording: %s" %(errorCount, e))
 
 
-###############receiving################3
-sock.bind((UDP_IP, UDP_PORT))
-    
-while True:
-	data, addr = sock.recvfrom(1024) # buffer size is 1024 bytes
-	print "received message:", data
+
 
