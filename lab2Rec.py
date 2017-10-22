@@ -10,21 +10,21 @@ CHANNELS = 1
 RATE = 48000
 INPUT_BLOCK_TIME = 0.02
 INPUT_FRAMES_PER_BLOCK = int(RATE*INPUT_BLOCK_TIME)
-UDP_IP = "2620::e50:1400:64f3:9ac8:f4bd:fbd3"
-UDP_PORT = 5005
+UDP_IP = ""
+UDP_PORT = 8000
 
 sock = socket.socket(socket.AF_INET6,socket.SOCK_DGRAM)
-sock.bind((UDP_IP,UDP_PORT))
+sock.bind(("",UDP_PORT))
 audio = pyaudio.PyAudio()
 
 streamout = audio.open(format = FORMAT, channels = CHANNELS, rate= RATE, output=True, frames_per_buffer = INPUT_FRAMES_PER_BLOCK)
 
-###############receiving################3
-sock.bind((UDP_IP, UDP_PORT))
+###############receiving################
     
 while True:
-	data, addr = sock.recvfrom(INPUT_FRAMES_PER_BLOCK*2) # buffer size is 1024 bytes
+	data, addr = sock.recvfrom(INPUT_FRAMES_PER_BLOCK) # buffer size is 1024 bytes
 	print data
 	while len(data) > 0:
+		print "data"
 		streamout.write(data)
 	

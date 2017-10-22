@@ -10,12 +10,12 @@ CHANNELS = 1
 RATE = 48000
 INPUT_BLOCK_TIME = 0.02
 INPUT_FRAMES_PER_BLOCK = int(RATE*INPUT_BLOCK_TIME)
-UDP_IP = "2620::e50:1400:64f3:9ac8:f4bd:fbd3"
-UDP_PORT = 5005
+UDP_IP = "2620:0:e50:1400:f104:2925:f242:be00"
+UDP_PORT = 8000
 
 sock = socket.socket(socket.AF_INET6,socket.SOCK_DGRAM)
 audio = pyaudio.PyAudio()
-stream = audio.open(format = FORMAT, channels = CHANNELS, rate=RATE, input = True, frames_per_buffer = 1024)
+stream = audio.open(format = FORMAT, channels = CHANNELS, rate=RATE, input = True, frames_per_buffer = INPUT_FRAMES_PER_BLOCK)
 #streamout = audio.open(format = FORMAT, channels = CHANNELS, rate= RATE,output=True, frames_per_buffer = INPUT_FRAMES_PER_BLOCK)
 # enc = Encoder(RATE,CHANNELS,constants.APPLICATION_VOIP)
 # dec = Decoder(RATE,CHANNELS,)
