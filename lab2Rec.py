@@ -17,14 +17,15 @@ sock = socket.socket(socket.AF_INET6,socket.SOCK_DGRAM)
 sock.bind(("",UDP_PORT))
 audio = pyaudio.PyAudio()
 
-streamout = audio.open(format = FORMAT, channels = CHANNELS, rate= RATE, output=True, frames_per_buffer = INPUT_FRAMES_PER_BLOCK)
+streamout = audio.open(format = FORMAT, channels = CHANNELS, rate= RATE, output=True, frames_per_buffer = INPUT_FRAMES_PER_BLOCK*50)
 
 ###############receiving################
     
 while True:
 	data, addr = sock.recvfrom(INPUT_FRAMES_PER_BLOCK) # buffer size is 1024 bytes
-	print data
+	print "Raw Data: ",data
 	while len(data) > 0:
 		print "data"
 		streamout.write(data)
+		data = []
 	
