@@ -27,9 +27,9 @@ while True:
 	print "Raw Data: ",data
 	while len(data) > 0:
 		print "data"
-		decdata = ''
+		decdata = []
 		for x in data:
-			decdata += Decoder.decode(dec,x,INPUT_FRAMES_PER_BLOCK)
+			decdata.append(Decoder.decode(dec,x,INPUT_FRAMES_PER_BLOCK))
 		streamout.write(decdata)
 		data = []
 	
