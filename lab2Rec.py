@@ -18,6 +18,7 @@ sock.bind(("",UDP_PORT))
 audio = pyaudio.PyAudio()
 
 streamout = audio.open(format = FORMAT, channels = CHANNELS, rate= RATE, output=True, frames_per_buffer = INPUT_FRAMES_PER_BLOCK*50)
+dec = Decoder(RATE,CHANNELS)
 
 ###############receiving################
     
@@ -26,6 +27,9 @@ while True:
 	print "Raw Data: ",data
 	while len(data) > 0:
 		print "data"
-		streamout.write(data)
+		decdata = ''
+		for x in data:
+			decdata += Decoder.decode(dec,x,INPUT_FRAMES_PER_BLOCK)
+		streamout.write(decdata)
 		data = []
 	

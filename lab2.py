@@ -17,8 +17,8 @@ sock = socket.socket(socket.AF_INET6,socket.SOCK_DGRAM)
 audio = pyaudio.PyAudio()
 stream = audio.open(format = FORMAT, channels = CHANNELS, rate=RATE, input = True, frames_per_buffer = 50*INPUT_FRAMES_PER_BLOCK)
 #streamout = audio.open(format = FORMAT, channels = CHANNELS, rate= RATE,output=True, frames_per_buffer = INPUT_FRAMES_PER_BLOCK)
-# enc = Encoder(RATE,CHANNELS,constants.APPLICATION_VOIP)
-# dec = Decoder(RATE,CHANNELS,)
+enc = Encoder(RATE,CHANNELS,constants.APPLICATION_VOIP)
+
 
 
 errorCount = 0
@@ -27,18 +27,16 @@ while(1):
 	try:
 		raw_data = stream.read(INPUT_FRAMES_PER_BLOCK)
 		serial = struct.pack('q',i)
-		sock.sendto(serial+raw_data,(UDP_IP,UDP_PORT))
 		i+=1
 		print i
-		# encdata = []
-		# for x in data:
-		# 	encdata.append(Encoder.encode(enc,x,INPUT_BLOCK_TIME))
-		# decdata = ''
-		# for x in encdata:
-		# 	decdata += Decoder.decode(dec,x,INPUT_BLOCK_TIME)
+		encdata = ""
+		for x in raw_data:
+			encdata += Encoder.encode(enc,x,INPUT_FRAMES_PER_BLOCK)
 
-		# streamout.write(decdata)
-		#streamout.close()
+
+
+		sock.sendto(serial+encdata,(UDP_IP,UDP_PORT))
+
 		#stream.close()
 	except IOError, e:
 		errorCount += 1
