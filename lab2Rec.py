@@ -24,16 +24,17 @@ dec = decoder.create(RATE,CHANNELS)
 ###############receiving################
     
 while True:
-	data = sock.recvfrom(136) # buffer size is 1024 bytes
-	print len(data)
+	data = sock.recvfrom(INPUT_FRAMES_PER_BLOCK) # buffer size is 1024 bytes
+	print len(data[0])
 	try:
-		assert len(data) == 136
+		assert len(data[0]) == 136
+		(serial,)=struct.unpack('q',data[0][:8])
+		raw_audio = decoder.decode(dec,data[0][8:],len(data[0][8:]),INPUT_FRAMES_PER_BLOCK, False, 1)
+		#print "Raw Data: ",raw_audio
+		streamout.write(raw_audio)
 	except AssertionError:
 		print 'Didn\'t get full packet!'
 		#sys.exit(1)
-	(serial,)=struct.unpack('q',data[:8])
-	raw_audio = decoder.decode(dec,data[8:],INPUT_FRAMES_PER_BLOCK)
-	print "Raw Data: ",raw_audio
-	streamout.write(raw_audio)
+	
 
 	
