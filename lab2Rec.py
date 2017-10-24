@@ -34,7 +34,7 @@ while True:
 		streamout.write(raw_audio)
 	except AssertionError:
 		print 'Didn\'t get full packet!'
-		#sys.exit(1)
+		sys.exit(1)
 	
 
 	

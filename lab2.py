@@ -20,6 +20,11 @@ stream = audio.open(format = FORMAT, channels = CHANNELS, rate=RATE, input = Tru
 enc = encoder.create(RATE,CHANNELS,constants.APPLICATION_VOIP)
 # disable variable bitrate (VBR)
 encoder.ctl(enc,opus_ctl.set_vbr,0)
+# configure expected jitter loss
+encoder.ctl(enc,opus_ctl.set_packet_loss_perc,2)
+
+# configure forward error correction (FEC)
+encoder.ctl(enc, opus_ctl.set_inband_fec,False)
 
 
 errorCount = 0
