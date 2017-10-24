@@ -1,24 +1,25 @@
 import pyaudio
 import struct
 import socket
-from opuslib import Encoder, Decoder
-from opuslib.api import constants
+from opuslib.api import constants, decoder, encoder
 from opuslib.exceptions import OpusError
+from opuslib.api import ctl as opus_ctl
 
 FORMAT = pyaudio.paInt16 
 CHANNELS = 1
 RATE = 48000
 INPUT_BLOCK_TIME = 0.02
 INPUT_FRAMES_PER_BLOCK = int(RATE*INPUT_BLOCK_TIME)
-UDP_IP = "2620:0:e50:1400:70cf:621c:8b4c:7bd9"
+UDP_IP = "2620:0:e50:1400:6407:a127:9b97:9b7"
 UDP_PORT = 8000
 
 sock = socket.socket(socket.AF_INET6,socket.SOCK_DGRAM)
 audio = pyaudio.PyAudio()
 stream = audio.open(format = FORMAT, channels = CHANNELS, rate=RATE, input = True, frames_per_buffer = 50*INPUT_FRAMES_PER_BLOCK)
 #streamout = audio.open(format = FORMAT, channels = CHANNELS, rate= RATE,output=True, frames_per_buffer = INPUT_FRAMES_PER_BLOCK)
-enc = Encoder(RATE,CHANNELS,constants.APPLICATION_VOIP)
-
+enc = encoder.create(RATE,CHANNELS,constants.APPLICATION_VOIP)
+# disable variable bitrate (VBR)
+encoder.ctl(enc,opus_ctl.set_vbr,0)
 
 
 errorCount = 0
@@ -30,8 +31,10 @@ while(1):
 		i+=1
 		print i
 		encdata = ""
-		for x in raw_data:
-			encdata += Encoder.encode(enc,x,INPUT_FRAMES_PER_BLOCK)
+		#for x in raw_data:
+		print "The length of the raw_data"
+		print len(raw_data)
+		encdata = encoder.encode(enc,raw_data,INPUT_FRAMES_PER_BLOCK, 128)
 		serial = struct.pack('q',i)
 		print len(encdata)
 
