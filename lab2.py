@@ -10,12 +10,14 @@ CHANNELS = 1
 RATE = 48000
 INPUT_BLOCK_TIME = 0.02
 INPUT_FRAMES_PER_BLOCK = int(RATE*INPUT_BLOCK_TIME)
-UDP_IP = "2620:0:e50:1400:9dba:bac9:43a7:5400"
+UDP_IP = "2620:0:e50:1400:7da6:2721:b578:b4d1"
 UDP_PORT = 8000
 
 sock = socket.socket(socket.AF_INET6,socket.SOCK_DGRAM)
+# sock = socket.socket(socket.AF_INET6,socket.SOCK_STREAM)
+# sock.connect((UDP_IP,UDP_PORT))
 audio = pyaudio.PyAudio()
-stream = audio.open(format = FORMAT, channels = CHANNELS, rate=RATE, input = True, frames_per_buffer = 50*INPUT_FRAMES_PER_BLOCK)
+stream = audio.open(format = FORMAT, channels = CHANNELS, rate=RATE, input = True, frames_per_buffer = 10*INPUT_FRAMES_PER_BLOCK)
 #streamout = audio.open(format = FORMAT, channels = CHANNELS, rate= RATE,output=True, frames_per_buffer = INPUT_FRAMES_PER_BLOCK)
 enc = encoder.create(RATE,CHANNELS,constants.APPLICATION_VOIP)
 # disable variable bitrate (VBR)
@@ -44,6 +46,7 @@ while(1):
 		print len(encdata)
 
 		sock.sendto(serial+encdata,(UDP_IP,UDP_PORT))
+		# sock.sendall(serial+encdata)
 
 		#stream.close()
 	except IOError, e:

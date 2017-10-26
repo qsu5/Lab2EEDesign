@@ -24,7 +24,7 @@ class recvAndDecode(threading.Thread):
 				(serial,)=struct.unpack('q',data[0][:8])
 				raw_audio = decoder.decode(dec,data[0][8:],len(data[0][8:]),INPUT_FRAMES_PER_BLOCK, False, 1)
 				#try:
-				if len(buf)<5:
+				if len(buf)<MAX_BUFF_SIZE:
 					heapq.heappush(buf,((serial,raw_audio)))
 				print len(buf)
 				#except 
@@ -42,11 +42,13 @@ class playOut(threading.Thread):
 
 	def run(self):
 		while True:
+			currentSerial = 0
 			if len(buf)>0:
-				print "try"
 				(serial,raw_audio) = heapq.heappop(buf)
-				print serial
-				streamout.write(raw_audio)
+				if currentSerial < serial:
+					print serial
+					currentSerial = serial
+					streamout.write(raw_audio)
 
 
 FORMAT = pyaudio.paInt16 
@@ -55,7 +57,8 @@ RATE = 48000
 INPUT_BLOCK_TIME = 0.02
 INPUT_FRAMES_PER_BLOCK = int(RATE*INPUT_BLOCK_TIME)
 UDP_IP = ""
-UDP_PORT = 8000
+UDP_PORT = 8001
+MAX_BUFF_SIZE = 5
 
 sock = socket.socket(socket.AF_INET6,socket.SOCK_DGRAM)
 sock.bind(("",UDP_PORT))
@@ -64,8 +67,8 @@ streamout = audio.open(format = FORMAT, channels = CHANNELS, rate= RATE, output=
 dec = decoder.create(RATE,CHANNELS)
 
 buf=[]
-heapq.heapify(buf)
-heapq._heapify_max(buf)
+# heapq.heapify(buf)
+# heapq._heapify_max(buf)
 
 a=recvAndDecode(sock,dec,buf)
 b=playOut(streamout,buf)
