@@ -26,7 +26,11 @@ class recvAndDecode(threading.Thread):
 				#try:
 				if len(buf)<MAX_BUFF_SIZE:
 					heapq.heappush(buf,((serial,raw_audio)))
-				print len(buf)
+				else:
+					heapq.heappop(buf)
+					heapq.heappush(buf,((serial,raw_audio)))
+				print "receiving and push to jb",serial
+				#print len(buf)
 				#except 
 
 				#print "Raw Data: ",raw_audio
@@ -46,7 +50,7 @@ class playOut(threading.Thread):
 			if len(buf)>0:
 				(serial,raw_audio) = heapq.heappop(buf)
 				if currentSerial < serial:
-					print serial
+					print "getting from", serial
 					currentSerial = serial
 					streamout.write(raw_audio)
 
@@ -63,7 +67,7 @@ MAX_BUFF_SIZE = 5
 sock = socket.socket(socket.AF_INET6,socket.SOCK_DGRAM)
 sock.bind(("",UDP_PORT))
 audio = pyaudio.PyAudio()
-streamout = audio.open(format = FORMAT, channels = CHANNELS, rate= RATE, output=True, frames_per_buffer = INPUT_FRAMES_PER_BLOCK*50)
+streamout = audio.open(format = FORMAT, channels = CHANNELS, rate= RATE, output=True, frames_per_buffer = INPUT_FRAMES_PER_BLOCK*5)
 dec = decoder.create(RATE,CHANNELS)
 
 buf=[]
