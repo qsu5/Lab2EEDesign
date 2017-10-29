@@ -6,6 +6,7 @@ from opuslib.exceptions import OpusError
 import threading
 import Queue
 import heapq
+import time
 import sys
 
 ###############receiving################
@@ -75,7 +76,12 @@ buf=[]
 # heapq._heapify_max(buf)
 
 a=recvAndDecode(sock,dec,buf)
+a.daemon = True
 b=playOut(streamout,buf)
+b.daemon = True
 a.start()
 b.start()
+
+while True:
+    time.sleep(1)
 	
